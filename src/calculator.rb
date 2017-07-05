@@ -21,10 +21,11 @@ multiply = Gtk::Button.new(label: '*')
 divide = Gtk::Button.new(label: '/')
 
 equals = Gtk::Button.new(label: '=')
+clear_button = Gtk::Button.new(label: 'C')
 
 # Text boxes
-input = Gtk::TextView.new
-output = Gtk::Label.new('Hello!')
+input = Gtk::Entry.new
+output = Gtk::Label.new
 
 # Containers
 
@@ -65,6 +66,9 @@ operator_container_one.add(subtract)
 operator_container_two.add(multiply)
 operator_container_two.add(divide)
 operator_container = Gtk::Box.new(:vertical, 2)
+operator_container.add(operator_container_one)
+operator_container.add(operator_container_two)
+operator_container.add(clear_button)
 
 # Main container
 main_container = Gtk::Box.new(:vertical, 6)
@@ -76,12 +80,102 @@ main_container.add(text_container)
 main_container.add(sub_container)
 main_container.add(equals)
 
+# Insert input
+def insert_number(text, input)
+  input.insert_text(text.to_s, 1, input.text.length)
+end
+
 # Event handlers
+
+# For numbers
+# noinspection RubyResolve
+nine.signal_connect(:clicked) do
+  insert_number('9', input)
+end
+# noinspection RubyResolve
+eight.signal_connect(:clicked) do
+  insert_number('8', input)
+end
+# noinspection RubyResolve
+seven.signal_connect(:clicked) do
+  insert_number('7', input)
+end
+# noinspection RubyResolve
+six.signal_connect(:clicked) do
+  insert_number('6', input)
+end
+# noinspection RubyResolve
+five.signal_connect(:clicked) do
+  insert_number('5', input)
+end
+# noinspection RubyResolve
+four.signal_connect(:clicked) do
+  insert_number('4', input)
+end
+# noinspection RubyResolve
+three.signal_connect(:clicked) do
+  insert_number('3', input)
+end
+# noinspection RubyResolve
+two.signal_connect(:clicked) do
+  insert_number('2', input)
+end
+# noinspection RubyResolve
+one.signal_connect(:clicked) do
+  insert_number('1', input)
+end
+# noinspection RubyResolve
+zero.signal_connect(:clicked) do
+  insert_number('0', input)
+end
+
+# For operators
+# noinspection RubyResolve
+add.signal_connect(:clicked) do
+  insert_number('+', input)
+end
+# noinspection RubyResolve
+subtract.signal_connect(:clicked) do
+  insert_number('-', input)
+end
+# noinspection RubyResolve
+multiply.signal_connect(:clicked) do
+  insert_number('*', input)
+end
+# noinspection RubyResolve
+divide.signal_connect(:clicked) do
+  insert_number('/', input)
+end
+
+# Answer
+# noinspection RubyResolve
+equals.signal_connect(:clicked) do
+  begin
+    @output = instance_eval input.text
+    output.text = @output.to_s
+  rescue SyntaxError => se
+    puts se
+  end
+end
+
+# Clear fields
+# noinspection RubyResolve
+clear_button.signal_connect(:clicked) do
+  input.text = ''
+  output.text = ''
+end
 
 # Init
 # noinspection RubyResolve
 window.border_width = 30
 window.add(main_container)
+# noinspection RubyResolve
+window.resizable = false
+
+# noinspection RubyResolve
+window.signal_connect(:destroy) do
+  Gtk.main_quit
+end
 
 window.show_all
 Gtk.main
